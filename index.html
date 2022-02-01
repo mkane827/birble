@@ -1,8 +1,21 @@
 <html>
-  <head>
-    <title>Birble</title>
-  </head>
-  <body>
-    <h1>Hello, World!</h1>
-  </body>
+
+<head>
+  <title>Birble</title>
+  <script src="./index.js"></script>
+  <link rel="stylesheet" href="./index.css">
+</head>
+
+<body onload="run()">
+  <div class="birble">
+    <label class="birble-label">
+      <h1>Upload your birb!</h1>
+      <input class="birble-input" type="file" accept="image/*" />
+    </label>
+
+    <canvas id="birble-canvas"></canvas>
+  </div>
+</body>
+
+
 </html>
