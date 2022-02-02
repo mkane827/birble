@@ -2,7 +2,11 @@
 
 <head>
   <title>Birble</title>
+  <script src="./ratings.js"></script>
   <script src="./index.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./index.css">
 </head>
 
@@ -10,10 +14,13 @@
   <div class="birble">
     <label class="birble-label">
       <h1>Upload your birb!</h1>
+      <h2 class="birble-target">Choose birb</h2>
       <input class="birble-input" type="file" accept="image/*" />
     </label>
 
     <canvas id="birble-canvas"></canvas>
+
+    <button class="share-birble hidden" onclick="share()">Share your birb</button>
   </div>
 </body>
 

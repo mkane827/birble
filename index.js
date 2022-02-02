@@ -1,11 +1,26 @@
+let rating;
+
+function rollRating() {
+  rating = ratings[Math.floor((Math.random() * 1000) % ratings.length)];
+}
+
 function run() {
   window.onresize = createBirble;
   document
     .querySelector("input.birble-input")
-    .addEventListener("change", createBirble);
+    .addEventListener("change", () => {
+      rollRating();
+      createBirble();
+    });
 }
 
 function createBirble() {
+  const files = document.querySelector("input.birble-input").files;
+  const shareButtonClassList = document.querySelector(
+    "button.share-birble"
+  ).classList;
+  if (!files || files.length < 1) return;
+  if (navigator.share) shareButtonClassList.remove("hidden");
   const canvas = document.getElementById("birble-canvas");
   canvas.width = window.innerWidth * 0.8;
   canvas.height = window.innerHeight * 0.8;
@@ -17,10 +32,6 @@ function createBirble() {
     const hRatio = canvas.width / this.naturalWidth;
     const vRatio = canvas.height / this.naturalHeight;
     const ratio = Math.min(hRatio, vRatio);
-    const hPadding = Math.max(
-      0,
-      (canvas.height - this.naturalHeight * ratio) / 2
-    );
     const wPadding = Math.max(
       0,
       (canvas.width - this.naturalWidth * ratio) / 2
@@ -32,25 +43,24 @@ function createBirble() {
       this.naturalWidth,
       this.naturalHeight,
       wPadding,
-      hPadding,
+      0,
       this.naturalWidth * ratio,
       this.naturalHeight * ratio
     );
 
     ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
-    ctx.fillRect(0, canvas.height * 0.72, canvas.width, 80);
+    ctx.fillRect(0, 20, canvas.width, 60);
     ctx.fillStyle = "white";
     ctx.textBaseline = "middle";
-    ctx.font = "48px sans-serif";
+    ctx.font = "30px sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText(
-      "what a good birb. 1 million points",
-      canvas.width / 2,
-      canvas.height * 0.8,
-      canvas.width * 0.8
-    );
+    ctx.fillText(rating, canvas.width / 2, 50, canvas.width * 0.8);
   };
-  img.src = URL.createObjectURL(
-    document.querySelector("input.birble-input").files[0]
-  );
+  img.src = URL.createObjectURL(files[0]);
+}
+
+function share() {
+  navigator.share({
+    file: document.getElementById("birble-canvas"),
+  });
 }

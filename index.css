@@ -1,3 +1,7 @@
+body {
+  font-family: "Roboto", sans-serif;
+}
+
 .birble {
   display: flex;
   flex-direction: column;
@@ -5,7 +9,34 @@
   justify-content: center;
 }
 
-.birble-input {
-  display: block;
+.birble-label {
   margin-bottom: 16px;
+}
+
+.birble-input {
+  opacity: 0;
+  height: 1px;
+  width: 1px;
+}
+
+.birble-target {
+  background-color: #fbda61;
+  background-image: linear-gradient(45deg, #fbda61 0%, #ff5acd 100%);
+  padding: 8px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.share-birble {
+  outline: none;
+  border: none;
+  background-color: #fbda61;
+  background-image: linear-gradient(45deg, #fbda61 0%, #ff5acd 100%);
+  padding: 8px;
+  font-size: 16px;
+  margin-top: 16px;
+}
+
+.share-birble.hidden {
+  display: none;
 }
