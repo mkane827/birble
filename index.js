@@ -60,7 +60,16 @@ function createBirble() {
 }
 
 function share() {
-  navigator.share({
-    file: document.getElementById("birble-canvas"),
-  });
+  fetch(document.getElementById("birble-canvas").toDataURL())
+    .then((img) => img.blob())
+    .then((blob) => {
+      navigator.share({
+        files: [
+          new File([blob], "birb.png", {
+            type: blob.type,
+            lastModified: new Date().getTime(),
+          }),
+        ],
+      });
+    });
 }
