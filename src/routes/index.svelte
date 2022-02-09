@@ -1,10 +1,13 @@
 <script>
-	import Canvas from '$lib/Canvas.svelte';
 	import { rollRating } from '$lib/ratings';
 	import { onMount } from 'svelte';
 	let rating = rollRating();
 	let file,
 		files,
+		canvasWrapperHeight,
+		canvasWrapperWidth,
+		imgHeight,
+		imgWidth,
 		canvas = {},
 		navigatorShare;
 
@@ -33,16 +36,67 @@
 	}
 
 	$: showShare = navigatorShare && files && files.length > 0;
+	$: {
+		if (canvas && file) {
+			canvas.width = canvasWrapperHeight * 0.8;
+			canvas.height = canvasWrapperWidth * 0.8;
+			const ctx = canvas.getContext('2d');
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+			const img = new Image();
+			img.onload = function () {
+				const hRatio = canvas.width / this.naturalWidth;
+				const vRatio = canvas.height / this.naturalHeight;
+				const ratio = Math.min(hRatio, vRatio);
+				const wPadding = Math.max(0, (canvas.width - this.naturalWidth * ratio) / 2);
+				imgHeight = this.naturalHeight * ratio;
+				imgWidth = this.naturalWidth * ratio;
+				ctx.drawImage(
+					img,
+					0,
+					0,
+					this.naturalWidth,
+					this.naturalHeight,
+					wPadding,
+					0,
+					imgWidth,
+					imgHeight
+				);
+
+				ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+				ctx.fillRect(0, 20, canvas.width, 60);
+				ctx.fillStyle = 'white';
+				ctx.textBaseline = 'middle';
+				ctx.font = '30px sans-serif';
+				ctx.textAlign = 'center';
+				ctx.fillText(rating.description, canvas.width / 2, 50, canvas.width * 0.8);
+			};
+			img.src = URL.createObjectURL(file);
+		}
+	}
 </script>
 
 <div class="birble">
+	<header>
+		<h1>birble</h1>
+		<div>
+			<button class="header-button"><img src="/help.png" alt="help" /></button>
+			<button class="header-button"><img src="/settings.png" alt="settings" /></button>
+		</div>
+	</header>
+
+	<div
+		class="canvas-wrapper"
+		bind:clientHeight={canvasWrapperHeight}
+		bind:clientWidth={canvasWrapperWidth}
+		on:resize={() => console.log('resize')}
+	>
+		<canvas bind:this={canvas} />
+	</div>
 	<label class="birble-label">
-		<h1>Upload your birb!</h1>
-		<h2 class="birble-target">Choose birb</h2>
+		<h2 class="birble-target">Add birb</h2>
 		<input class="birble-input" type="file" accept="image/*" bind:files on:change={newBirb} />
 	</label>
-
-	<Canvas bind:canvas {file} {rating} />
 	{#if showShare}
 		<button class="share-birble" on:click={() => share()}>Share your birb</button>
 	{/if}
@@ -51,20 +105,44 @@
 <style>
 	:global(body) {
 		font-family: 'Roboto', sans-serif;
+		height: 100vh;
+		margin: 0;
+		padding: 0;
+		overflow: hidden;
+		text-transform: uppercase;
+	}
+
+	header {
 		display: flex;
-		flex-direction: column;
-		align-items: stretch;
-		justify-content: stretch;
-		min-height: 0;
+		align-items: center;
+		width: 80%;
+		padding: 16px 0 4px;
+		border-bottom: solid 1px black;
+	}
+
+	header h1 {
+		flex: 1 1 auto;
+		text-align: center;
+		margin: 0;
+		padding: 0;
+	}
+
+	.header-button {
+		background: none;
+		border: none;
+		outline: none;
+	}
+
+	.header-button img {
+		height: 30px;
 	}
 
 	.birble {
-		flex: 1 1 auto;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		justify-content: center;
-		max-height: 100%;
+		height: 100%;
+		width: 100%;
 	}
 
 	.birble-label {
@@ -93,5 +171,13 @@
 		padding: 8px;
 		font-size: 16px;
 		margin-top: 16px;
+	}
+
+	.canvas-wrapper {
+		flex: 1 1 auto;
+		min-height: 0;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 </style>
