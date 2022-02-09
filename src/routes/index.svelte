@@ -1,78 +1,54 @@
 <script>
 	import { rollRating } from '$lib/ratings';
-	import { onMount } from 'svelte';
+	import Score from '$lib/Score.svelte';
 	let rating = rollRating();
-	let file,
-		files,
-		canvasWrapperHeight,
+	let canvasWrapperHeight,
 		canvasWrapperWidth,
 		imgHeight,
 		imgWidth,
 		canvas = {},
-		navigatorShare;
+		showScore = false;
 
-	onMount(() => {
-		navigatorShare = navigator && navigator.share;
-	});
-
-	function newBirb() {
+	function newBirb(e) {
 		rating = rollRating();
-		file = files[0];
-	}
+		file = e.target.files[0];
+		canvas.width = canvasWrapperHeight * 0.8;
+		canvas.height = canvasWrapperWidth * 0.8;
+		const ctx = canvas.getContext('2d');
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-	function share() {
-		fetch(canvas.toDataURL())
-			.then((img) => img.blob())
-			.then((blob) => {
-				navigatorShare({
-					files: [
-						new File([blob], 'birb.png', {
-							type: blob.type,
-							lastModified: new Date().getTime()
-						})
-					]
-				});
-			});
-	}
+		const img = new Image();
+		img.onload = function () {
+			const hRatio = canvas.width / this.naturalWidth;
+			const vRatio = canvas.height / this.naturalHeight;
+			const ratio = Math.min(hRatio, vRatio);
+			const wPadding = Math.max(0, (canvas.width - this.naturalWidth * ratio) / 2);
+			imgHeight = this.naturalHeight * ratio;
+			imgWidth = this.naturalWidth * ratio;
+			ctx.drawImage(
+				img,
+				0,
+				0,
+				this.naturalWidth,
+				this.naturalHeight,
+				wPadding,
+				0,
+				imgWidth,
+				imgHeight
+			);
 
-	$: showShare = navigatorShare && files && files.length > 0;
-	$: {
-		if (canvas && file) {
-			canvas.width = canvasWrapperHeight * 0.8;
-			canvas.height = canvasWrapperWidth * 0.8;
-			const ctx = canvas.getContext('2d');
-			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+			ctx.fillRect(0, 20, canvas.width, 60);
+			ctx.fillStyle = 'white';
+			ctx.textBaseline = 'middle';
+			ctx.font = '30px sans-serif';
+			ctx.textAlign = 'center';
+			ctx.fillText(rating.description, canvas.width / 2, 50, canvas.width * 0.8);
 
-			const img = new Image();
-			img.onload = function () {
-				const hRatio = canvas.width / this.naturalWidth;
-				const vRatio = canvas.height / this.naturalHeight;
-				const ratio = Math.min(hRatio, vRatio);
-				const wPadding = Math.max(0, (canvas.width - this.naturalWidth * ratio) / 2);
-				imgHeight = this.naturalHeight * ratio;
-				imgWidth = this.naturalWidth * ratio;
-				ctx.drawImage(
-					img,
-					0,
-					0,
-					this.naturalWidth,
-					this.naturalHeight,
-					wPadding,
-					0,
-					imgWidth,
-					imgHeight
-				);
-
-				ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-				ctx.fillRect(0, 20, canvas.width, 60);
-				ctx.fillStyle = 'white';
-				ctx.textBaseline = 'middle';
-				ctx.font = '30px sans-serif';
-				ctx.textAlign = 'center';
-				ctx.fillText(rating.description, canvas.width / 2, 50, canvas.width * 0.8);
-			};
-			img.src = URL.createObjectURL(file);
-		}
+			console.log('onload?');
+			showScore = true;
+		};
+		img.src = URL.createObjectURL(file);
 	}
 </script>
 
@@ -95,10 +71,10 @@
 	</div>
 	<label class="birble-label">
 		<h2 class="birble-target">Add birb</h2>
-		<input class="birble-input" type="file" accept="image/*" bind:files on:change={newBirb} />
+		<input class="birble-input" type="file" accept="image/*" on:change={newBirb} />
 	</label>
-	{#if showShare}
-		<button class="share-birble" on:click={() => share()}>Share your birb</button>
+	{#if showScore}
+		<Score bind:showScore points={rating.points} {canvas} />
 	{/if}
 </div>
 
@@ -161,16 +137,6 @@
 		padding: 8px;
 		cursor: pointer;
 		text-align: center;
-	}
-
-	.share-birble {
-		outline: none;
-		border: none;
-		background-color: #fbda61;
-		background-image: linear-gradient(45deg, #fbda61 0%, #ff5acd 100%);
-		padding: 8px;
-		font-size: 16px;
-		margin-top: 16px;
 	}
 
 	.canvas-wrapper {
