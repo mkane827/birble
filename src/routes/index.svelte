@@ -1,7 +1,9 @@
 <script>
 	import Help from '$lib/Help.svelte';
+	import { getRandomLessThan } from '$lib/random';
 	import { rollRating } from '$lib/ratings';
 	import Score from '$lib/Score.svelte';
+	import Settings from '$lib/Settings.svelte';
 	import { onMount } from 'svelte';
 	let rating = rollRating();
 	let canvasWrapperHeight,
@@ -10,16 +12,19 @@
 		imgWidth,
 		canvas = {},
 		showScore = false,
-		showHelp = false;
+		showSettings = false,
+		showHelp = false,
+		hardMode = false;
 
 	onMount(() => {
 		showHelp = !localStorage.getItem('isFirstVisit');
 		localStorage.setItem('isFirstVisit', false);
+		newBirb();
 	});
 
 	function newBirb(e) {
+		const hasSelectedFile = e && e.target && e.target.files && e.target.files.length > 0;
 		rating = rollRating();
-		file = e.target.files[0];
 		canvas.width = canvasWrapperHeight * 0.8;
 		canvas.height = canvasWrapperWidth * 0.8;
 		const ctx = canvas.getContext('2d');
@@ -53,10 +58,15 @@
 			ctx.textAlign = 'center';
 			ctx.fillText(rating.description, canvas.width / 2, 50, canvas.width * 0.8);
 
-			console.log('onload?');
-			showScore = true;
+			if (hasSelectedFile) {
+				showScore = true;
+			}
 		};
-		img.src = URL.createObjectURL(file);
+		if (hasSelectedFile) {
+			img.src = URL.createObjectURL(e.target.files[0]);
+		} else {
+			img.src = `/placeholder${getRandomLessThan(7)}.jpg`;
+		}
 	}
 </script>
 
@@ -67,7 +77,9 @@
 			<button class="header-button" on:click={() => (showHelp = true)}
 				><img src="/help.png" alt="help" /></button
 			>
-			<button class="header-button"><img src="/settings.png" alt="settings" /></button>
+			<button class="header-button" on:click={() => (showSettings = true)}
+				><img src="/settings.png" alt="settings" /></button
+			>
 		</div>
 	</header>
 
@@ -85,6 +97,8 @@
 	</label>
 	{#if showHelp}
 		<Help onClose={() => (showHelp = false)} />
+	{:else if showSettings}
+		<Settings onClose={() => (showSettings = false)} bind:hardMode />
 	{:else if showScore}
 		<Score onClose={() => (showScore = false)} points={rating.points} {canvas} />
 	{/if}

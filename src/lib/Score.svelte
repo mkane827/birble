@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import Modal from './Modal.svelte';
+	import { getRandomLessThan } from './random';
 	export let points;
 	export let onClose;
 	export let canvas;
@@ -23,10 +24,6 @@
 					]
 				});
 			});
-	}
-
-	function getRandomLessThan(x) {
-		return Math.floor((Math.random() * 1000) % x);
 	}
 
 	$: featherPoints = getRandomLessThan(points);
