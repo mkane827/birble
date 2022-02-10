@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import Modal from './Modal.svelte';
 	export let points;
-	export let showScore;
+	export let onClose;
 	export let canvas;
 	let navigatorShare;
 
@@ -23,10 +23,6 @@
 					]
 				});
 			});
-	}
-
-	function onClose() {
-		showScore = false;
 	}
 
 	function getRandomLessThan(x) {

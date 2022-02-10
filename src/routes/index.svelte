@@ -1,13 +1,21 @@
 <script>
+	import Help from '$lib/Help.svelte';
 	import { rollRating } from '$lib/ratings';
 	import Score from '$lib/Score.svelte';
+	import { onMount } from 'svelte';
 	let rating = rollRating();
 	let canvasWrapperHeight,
 		canvasWrapperWidth,
 		imgHeight,
 		imgWidth,
 		canvas = {},
-		showScore = false;
+		showScore = false,
+		showHelp = false;
+
+	onMount(() => {
+		showHelp = !localStorage.getItem('isFirstVisit');
+		localStorage.setItem('isFirstVisit', false);
+	});
 
 	function newBirb(e) {
 		rating = rollRating();
@@ -56,7 +64,9 @@
 	<header>
 		<h1>birble</h1>
 		<div>
-			<button class="header-button"><img src="/help.png" alt="help" /></button>
+			<button class="header-button" on:click={() => (showHelp = true)}
+				><img src="/help.png" alt="help" /></button
+			>
 			<button class="header-button"><img src="/settings.png" alt="settings" /></button>
 		</div>
 	</header>
@@ -73,8 +83,10 @@
 		<h2 class="birble-target">Add birb</h2>
 		<input class="birble-input" type="file" accept="image/*" on:change={newBirb} />
 	</label>
-	{#if showScore}
-		<Score bind:showScore points={rating.points} {canvas} />
+	{#if showHelp}
+		<Help onClose={() => (showHelp = false)} />
+	{:else if showScore}
+		<Score onClose={() => (showScore = false)} points={rating.points} {canvas} />
 	{/if}
 </div>
 
