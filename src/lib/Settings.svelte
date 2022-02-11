@@ -31,7 +31,7 @@
 	}
 
 	.hard-mode button {
-		background: blue;
+		background: grey;
 		outline: none;
 		border: none;
 		width: 60px;
@@ -40,14 +40,14 @@
 	}
 
 	.hard-mode button.on {
-		background: green;
+		background: darkgrey;
 	}
 
 	.hard-mode button .slider {
 		height: 100%;
 		width: 60%;
 		border-radius: 50%;
-		background: red;
+		background: black;
 		transition: all;
 		transition-duration: 100ms;
 		position: relative;

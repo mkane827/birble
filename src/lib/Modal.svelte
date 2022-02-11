@@ -28,6 +28,9 @@
 		background: white;
 		padding: 24px;
 		min-width: 50vw;
+		max-width: 90vw;
+		max-height: 90vh;
+		overflow: auto;
 	}
 
 	nav {

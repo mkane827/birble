@@ -125,7 +125,7 @@
 	header h1 {
 		flex: 1 1 auto;
 		text-align: center;
-		margin: 0;
+		margin: 0 0 0 88px;
 		padding: 0;
 	}
 
@@ -160,6 +160,7 @@
 	.birble-target {
 		background-color: #fbda61;
 		background-image: linear-gradient(45deg, #fbda61 0%, #ff5acd 100%);
+		border-radius: 4px;
 		padding: 8px;
 		cursor: pointer;
 		text-align: center;
