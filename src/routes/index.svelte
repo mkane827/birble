@@ -65,7 +65,7 @@
 		if (hasSelectedFile) {
 			img.src = URL.createObjectURL(e.target.files[0]);
 		} else {
-			img.src = `/placeholder${getRandomLessThan(7)}.jpg`;
+			img.src = `./placeholder${getRandomLessThan(7)}.jpg`;
 		}
 	}
 </script>
@@ -75,10 +75,10 @@
 		<h1>birble</h1>
 		<div>
 			<button class="header-button" on:click={() => (showHelp = true)}
-				><img src="/help.png" alt="help" /></button
+				><img src="./help.png" alt="help" /></button
 			>
 			<button class="header-button" on:click={() => (showSettings = true)}
-				><img src="/settings.png" alt="settings" /></button
+				><img src="./settings.png" alt="settings" /></button
 			>
 		</div>
 	</header>

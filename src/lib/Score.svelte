@@ -51,7 +51,7 @@
 	</div>
 	{#if navigatorShare || true}
 		<button class="share-birble" on:click={share}
-			>Share birb <img src="/share.png" alt="share birb" /></button
+			>Share birb <img src="./share.png" alt="share birb" /></button
 		>
 	{/if}
 </Modal>

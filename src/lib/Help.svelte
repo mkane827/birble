@@ -19,9 +19,9 @@
 	</ul>
 	<h2>Examples</h2>
 	<div class="examples">
-		<img src="/example{examples[0]}.jpg" alt="example 1" />
-		<img src="/example{examples[1]}.jpg" alt="example 2" />
-		<img src="/example{examples[2]}.jpg" alt="example 3" />
+		<img src="./example{examples[0]}.jpg" alt="example 1" />
+		<img src="./example{examples[1]}.jpg" alt="example 2" />
+		<img src="./example{examples[2]}.jpg" alt="example 3" />
 	</div>
 	<p>A birble is always available</p>
 </Modal>
