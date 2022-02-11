@@ -49,7 +49,7 @@
 		<span class="category">Talons</span>
 		<div class="point-graph" style="width: {20 + 20 * talonPoints}px">{talonPoints}</div>
 	</div>
-	{#if navigatorShare || true}
+	{#if navigatorShare}
 		<button class="share-birble" on:click={share}
 			>Share birb <img src="./share.png" alt="share birb" /></button
 		>
