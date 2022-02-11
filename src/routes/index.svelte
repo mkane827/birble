@@ -6,15 +6,11 @@
 	import Settings from '$lib/Settings.svelte';
 	import { onMount } from 'svelte';
 	let rating = rollRating();
-	let canvasWrapperHeight,
-		canvasWrapperWidth,
-		imgHeight,
-		imgWidth,
-		canvas = {},
-		showScore = false,
+	let showScore = false,
 		showSettings = false,
 		showHelp = false,
-		hardMode = false;
+		hardMode = false,
+		imgSrc;
 
 	onMount(() => {
 		showHelp = !localStorage.getItem('isFirstVisit');
@@ -25,42 +21,29 @@
 	function newBirb(e) {
 		const hasSelectedFile = e && e.target && e.target.files && e.target.files.length > 0;
 		rating = rollRating();
-		canvas.width = canvasWrapperHeight * 0.8;
-		canvas.height = canvasWrapperWidth * 0.8;
+		const canvas = document.createElement('canvas');
 		const ctx = canvas.getContext('2d');
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 		const img = new Image();
 		img.onload = function () {
-			const hRatio = canvas.width / this.naturalWidth;
-			const vRatio = canvas.height / this.naturalHeight;
-			const ratio = Math.min(hRatio, vRatio);
-			const wPadding = Math.max(0, (canvas.width - this.naturalWidth * ratio) / 2);
-			imgHeight = this.naturalHeight * ratio;
-			imgWidth = this.naturalWidth * ratio;
-			ctx.drawImage(
-				img,
-				0,
-				0,
-				this.naturalWidth,
-				this.naturalHeight,
-				wPadding,
-				0,
-				imgWidth,
-				imgHeight
-			);
+			canvas.height = this.naturalHeight;
+			canvas.width = this.naturalWidth;
+			ctx.drawImage(img, 0, 0, this.naturalWidth, this.naturalHeight);
 
+			const paddingTop = this.naturalHeight / 20;
 			ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-			ctx.fillRect(0, 20, canvas.width, 60);
+			ctx.fillRect(0, paddingTop, canvas.width, this.naturalHeight / 10);
 			ctx.fillStyle = 'white';
-			ctx.textBaseline = 'middle';
-			ctx.font = '30px sans-serif';
+			ctx.textBaseline = 'top';
+			ctx.font = `${this.naturalHeight / 200}rem sans-serif`;
 			ctx.textAlign = 'center';
-			ctx.fillText(rating.description, canvas.width / 2, 50, canvas.width * 0.8);
+			ctx.fillText(rating.description, canvas.width / 2, paddingTop * 1.2, canvas.width * 0.8);
 
 			if (hasSelectedFile) {
 				showScore = true;
 			}
+
+			imgSrc = canvas.toDataURL();
 		};
 		if (hasSelectedFile) {
 			img.src = URL.createObjectURL(e.target.files[0]);
@@ -83,13 +66,10 @@
 		</div>
 	</header>
 
-	<div
-		class="canvas-wrapper"
-		bind:clientHeight={canvasWrapperHeight}
-		bind:clientWidth={canvasWrapperWidth}
-		on:resize={() => console.log('resize')}
-	>
-		<canvas bind:this={canvas} />
+	<div class="img-wrapper">
+		{#if imgSrc}
+			<img src={imgSrc} alt="birble" />
+		{/if}
 	</div>
 	<label class="birble-label">
 		<h2 class="birble-target">Add birb</h2>
@@ -100,7 +80,7 @@
 	{:else if showSettings}
 		<Settings onClose={() => (showSettings = false)} bind:hardMode />
 	{:else if showScore}
-		<Score onClose={() => (showScore = false)} points={rating.points} {canvas} />
+		<Score onClose={() => (showScore = false)} points={rating.points} {imgSrc} />
 	{/if}
 </div>
 
@@ -166,11 +146,17 @@
 		text-align: center;
 	}
 
-	.canvas-wrapper {
+	.img-wrapper {
 		flex: 1 1 auto;
 		min-height: 0;
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		padding: 24px;
+	}
+
+	.img-wrapper img {
+		max-height: 100%;
+		max-width: 100%;
 	}
 </style>

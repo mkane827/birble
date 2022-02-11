@@ -4,7 +4,7 @@
 	import { getRandomLessThan } from './random';
 	export let points;
 	export let onClose;
-	export let canvas;
+	export let imgSrc;
 	let navigatorShare;
 
 	onMount(() => {
@@ -12,7 +12,7 @@
 	});
 
 	function share() {
-		fetch(canvas.toDataURL())
+		fetch(imgSrc)
 			.then((img) => img.blob())
 			.then((blob) => {
 				navigatorShare({
